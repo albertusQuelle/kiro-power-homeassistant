@@ -26,7 +26,7 @@ body = """
 {% endif %}
 {%- endfor %}
 
-**Full Changelog**: https://github.com/rewse/kiro-power-homeassistant/compare/{{ previous.version }}...{{ version }}
+**Full Changelog**: https://github.com/albertusQuelle/kiro-power-homeassistant/compare/{{ previous.version }}...{{ version }}
 """
 footer = ""
 trim = true

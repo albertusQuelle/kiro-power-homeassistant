@@ -60,7 +60,7 @@ The server also ships bundled best-practice guides via `ha_get_skill_guide`, whi
 1. Open Kiro
 2. Open Powers panel
 3. Click "Import power from GitHub"
-4. Enter: `https://github.com/rewse/kiro-power-homeassistant/tree/main/power-homeassistant`
+4. Enter: `https://github.com/albertusQuelle/kiro-power-homeassistant/tree/main/power-homeassistant`
 
 ### From Local Path
 
@@ -161,5 +161,7 @@ When you mention keywords like "homeassistant," "home assistant," "hass,", "ha-m
 For detailed troubleshooting, see the [official FAQ](https://github.com/homeassistant-ai/ha-mcp/blob/master/docs/FAQ.md).
 
 ## Credits
+
+This fork is based on the original [rewse/kiro-power-homeassistant](https://github.com/rewse/kiro-power-homeassistant) project.
 
 Special thanks to the [Home Assistant AI team](https://github.com/homeassistant-ai/ha-mcp) for their excellent work on the MCP server.
