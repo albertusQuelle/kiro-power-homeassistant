@@ -71,7 +71,7 @@ The server also ships bundled best-practice guides via `ha_get_skill_guide`, whi
 
 ## How the MCP server runs
 
-This power ships an `mcp.json` that runs the [`ha-mcp`](https://github.com/homeassistant-ai/ha-mcp) server with `uvx ha-mcp@latest` over stdio, connecting to your Home Assistant with a long-lived token. This works on any Home Assistant install type and is the zero-extra-setup default for this power.
+This power ships an `mcp.json` that runs the [`ha-mcp`](https://github.com/homeassistant-ai/ha-mcp) server with `uvx --system-certs ha-mcp@latest` over stdio, connecting to your Home Assistant with a long-lived token. Using the operating system trust store also supports enterprise TLS proxies and private certificate authorities. This works on any Home Assistant install type and is the zero-extra-setup default for this power.
 
 The `ha-mcp` project also offers other ways to run the same server, which you can point Kiro at instead:
 
