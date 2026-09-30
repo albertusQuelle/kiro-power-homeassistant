@@ -2,7 +2,7 @@
 
 ## MCP Server: Home Assistant
 
-**Package:** `ha-mcp@latest` (verified against ha-mcp 8.x)
+**Package:** `ha-mcp==8.6.0` (pinned; verified against ha-mcp 8.x — see README for why the version is pinned rather than `@latest`)
 **Connection:** uvx-based MCP server (also runnable as a HACS in-process component or Home Assistant app — see README)
 **Authentication:** Home Assistant long-lived access token (for the uvx/PyPI and Docker methods)
 
