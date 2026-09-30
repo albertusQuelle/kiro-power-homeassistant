@@ -16,6 +16,19 @@
 
 The server ships bundled best-practice "skill" guides. **Call `ha_get_skill_guide` first** before automations, dashboards, templates, and other structured work. It returns the server's own up-to-date guidance and complements the steering files in this power.
 
+## Best-practices acknowledgment key (required for write tools)
+
+ha-mcp 8.x can run in **strict best-practices mode**. When it is on, the create/update tools — `ha_config_set_automation`, `ha_config_set_script`, `ha_config_set_scene`, `ha_config_set_helper`, and `ha_config_set_dashboard` — reject writes with `BPS_ACKNOWLEDGMENT_REQUIRED` unless you pass a `BestPracticeKey`.
+
+Workflow:
+1. Call `ha_get_skill_guide(file="SKILL.md")` (skill `home-assistant-best-practices`). The response begins with an acknowledgment phrase like `I-HAVE-READ-THE-BEST-PRACTICES-GUIDE-<hash>`.
+2. Pass that exact value as `BestPracticeKey` on the write call.
+
+Notes:
+- The key is **not a secret** — it is a read-receipt that the server publishes openly and **rotates periodically** and **per server instance**. Always re-read the guide for the current value instead of reusing an old one; a key from a different server instance will be rejected.
+- `MandatoryBPS: false` only downgrades the gate when the server is **not** in strict mode; if `strict_mandatory_bps` is true the key is still required.
+- If a write is rejected with a schema error like "must NOT have additional properties" when you include `BestPracticeKey`, the MCP client is validating against a stale cached tool schema — fully reload the client (do not just reconnect the server) so it re-negotiates the current schema.
+
 ## Consolidated tool model (ha-mcp 8.x)
 
 ha-mcp 8.x consolidated many single-purpose tools into a smaller set of multi-mode tools. Instead of separate `list`/`get` tools, most read tools take an optional identifier (omit it to list, pass it to fetch one). Instead of separate `create`/`update`/`delete` tools, most writes use a `ha_set_*` (create or update) plus `ha_remove_*` pair, and several domains use a single `ha_manage_*` tool with an `action` parameter.

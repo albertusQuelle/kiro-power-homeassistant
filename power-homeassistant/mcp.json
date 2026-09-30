@@ -46,7 +46,7 @@
     "fetch": {
       "command": "uvx",
       "args": [
-        "mcp-server-fetch",
+        "mcp-server-fetch==2026.8.18",
         "--ignore-robots-txt"
       ],
       "autoApprove": [
