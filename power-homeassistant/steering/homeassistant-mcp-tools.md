@@ -1,201 +1,186 @@
 # Home Assistant MCP Server Tools Reference
 
-## MCP Server: homeassistant
+## MCP Server: Home Assistant
 
-**Package:** `ha-mcp@latest`
-**Connection:** uvx-based MCP server
-**Authentication:** Home Assistant long-lived access token
+**Package:** `ha-mcp@latest` (verified against ha-mcp 8.x)
+**Connection:** uvx-based MCP server (also runnable as a HACS in-process component or Home Assistant app — see README)
+**Authentication:** Home Assistant long-lived access token (for the uvx/PyPI and Docker methods)
 
-**Configuration Required:**
+**Configuration Required (uvx/PyPI method):**
 - `HOMEASSISTANT_URL` - Your Home Assistant URL (e.g., `http://homeassistant.local:8123`)
 - `HOMEASSISTANT_TOKEN` - Long-lived access token
 
-## Available Tools (82 tools)
+> The in-process HACS component and the Home Assistant app run inside Home Assistant and need no token — you connect Kiro to a server URL instead. This reference describes the tools; they are identical across install methods.
 
-### Search & Discovery
-- `ha_search_entities` - Fuzzy entity search
-- `ha_deep_search` - Deep config search
-- `ha_get_overview` - Get system overview
-- `ha_get_state` - Get entity state
+## Start Here: `ha_get_skill_guide`
 
-### Service & Device Control
-- `ha_call_service` - Call service
-- `ha_bulk_control` - Bulk device control
-- `ha_get_operation_status` - Get operation status
-- `ha_get_bulk_status` - Get bulk status
-- `ha_list_services` - List services
+The server ships bundled best-practice "skill" guides. **Call `ha_get_skill_guide` first** before automations, dashboards, templates, and other structured work. It returns the server's own up-to-date guidance and complements the steering files in this power.
+
+## Consolidated tool model (ha-mcp 8.x)
+
+ha-mcp 8.x consolidated many single-purpose tools into a smaller set of multi-mode tools. Instead of separate `list`/`get` tools, most read tools take an optional identifier (omit it to list, pass it to fetch one). Instead of separate `create`/`update`/`delete` tools, most writes use a `ha_set_*` (create or update) plus `ha_remove_*` pair, and several domains use a single `ha_manage_*` tool with an `action` parameter.
+
+Key conventions:
+- `ha_set_*` — create when no ID is given, update when an ID is given.
+- `ha_get_*` — list when no ID is given, fetch details when an ID is given.
+- `ha_manage_*` — takes an `action` argument (e.g., `list`, `install`, `remove`).
+
+## Available Tools (77 tools)
+
+### Discovery & State
+- `ha_search` — Search entities by name/domain/area AND inside automation/script/scene/helper/dashboard configs (replaces the old `ha_search_entities` and `ha_deep_search`)
+- `ha_get_overview` — AI-friendly system overview with intelligent categorization
+- `ha_get_state` — Current state and attributes of one or more entities
+- `ha_get_entity` — Entity registry information for one or more entities
+- `ha_get_entity_exposure` — Assist/voice exposure settings (list all, or one entity)
+- `ha_get_history` — Historical/time-series and statistics data from the recorder (replaces `ha_get_statistics`)
+- `ha_get_logs` — Home Assistant logs from various sources (replaces `ha_get_logbook`)
+- `ha_get_camera_image` — Snapshot from a camera entity
+- `ha_eval_template` — Evaluate a Jinja2 template with Home Assistant's engine
+
+### Control & Services
+- `ha_call_service` — Execute any Home Assistant service (device control, trigger automations)
+- `ha_bulk_control` — Explicit operations or one deterministic structural bulk action
+- `ha_call_event` — Fire a custom event on the event bus
+- `ha_list_services` — List available services (paginated, detail control)
+- `ha_get_operation_status` — Status of device operations with WebSocket verification
+
+### Entities & Devices
+- `ha_set_entity` — Update entity registry properties (rename, area, disable, labels — replaces `ha_rename_entity`)
+- `ha_remove_entity` — Remove one or more entities from the registry
+- `ha_get_device` — Device info (paginated), including Zigbee (ZHA/Z2M) and Z-Wave JS (replaces `ha_list_devices`/`ha_get_zha_devices`)
+- `ha_set_device` — Update device name, area, disabled state, labels
+- `ha_remove_device` — Remove an orphaned device from the registry
 
 ### Automations
-- `ha_config_get_automation` - Get automation
-- `ha_config_set_automation` - Set automation
-- `ha_config_remove_automation` - Remove automation
+- `ha_config_get_automation` — Read automation config (list all, or one by ID)
+- `ha_config_set_automation` — Create or update an automation
+- `ha_config_remove_automation` — Delete an automation
+- `ha_get_automation_traces` — Execution traces for automations and scripts (debugging)
 
 ### Scripts
-- `ha_config_get_script` - Get script
-- `ha_config_set_script` - Set script
-- `ha_config_remove_script` - Remove script
+- `ha_config_get_script` — Read script config
+- `ha_config_set_script` — Create or update a script
+- `ha_config_remove_script` — Delete a script
 
-### Helper Entities
-- `ha_config_list_helpers` - List helpers
-- `ha_config_set_helper` - Set helper
-- `ha_config_remove_helper` - Remove helper
+### Scenes
+- `ha_config_get_scene` — Read scene config
+- `ha_config_set_scene` — Create or update a scene
+- `ha_config_remove_scene` — Delete a scene
 
-### Dashboards
-- `ha_config_list_dashboards` - List dashboards
-- `ha_config_get_dashboard` - Get dashboard
-- `ha_config_set_dashboard` - Set dashboard
-- `ha_config_update_dashboard_metadata` - Update dashboard metadata
-- `ha_config_delete_dashboard` - Delete dashboard
-- `ha_get_dashboard_guide` - Get dashboard guide
-- `ha_get_card_types` - Get card types
-- `ha_get_card_documentation` - Get card documentation
-
-### Areas & Floors
-- `ha_config_list_areas` - List areas
-- `ha_config_set_area` - Set area
-- `ha_config_remove_area` - Remove area
-- `ha_config_list_floors` - List floors
-- `ha_config_set_floor` - Set floor
-- `ha_config_remove_floor` - Remove floor
-
-### Labels
-- `ha_config_list_labels` - List labels
-- `ha_config_get_label` - Get label
-- `ha_config_set_label` - Set label
-- `ha_config_remove_label` - Remove label
-- `ha_assign_label` - Assign label
-
-### Zones
-- `ha_list_zones` - List zones
-- `ha_create_zone` - Create zone
-- `ha_update_zone` - Update zone
-- `ha_delete_zone` - Delete zone
+### Helpers & Integrations
+- `ha_config_list_helpers` — List helpers of a type with their config
+- `ha_config_set_helper` — Create or update helper entities and config subentries (template sensors are created here; there is no separate `ha_config_set_template`)
+- `ha_get_integration` — Integration (config entry) information (paginated)
+- `ha_set_integration` — Enable/disable, add, update options, or reconfigure an integration
+- `ha_remove_helpers_integrations` — Remove a helper or integration config entry
 
 ### Groups
-- `ha_config_list_groups` - List groups
-- `ha_config_set_group` - Set group
-- `ha_config_remove_group` - Remove group
+- `ha_config_list_groups` — List entity groups with members
+- `ha_config_set_group` — Create or update a service-based group (`group.set`)
+- `ha_config_remove_group` — Remove a service-based group (`group.remove`)
 
-### Todo Lists
-- `ha_list_todo_lists` - List todo lists
-- `ha_get_todo_items` - Get todo items
-- `ha_add_todo_item` - Add todo item
-- `ha_update_todo_item` - Update todo item
-- `ha_remove_todo_item` - Remove todo item
+### Dashboards
+- `ha_config_get_dashboard` — List dashboards, get config, or search for cards (replaces `ha_config_list_dashboards`)
+- `ha_config_set_dashboard` — Create or update a dashboard (also handles metadata)
+- `ha_config_delete_dashboard` — Delete a storage-mode dashboard
+- `ha_config_list_dashboard_resources` — List Lovelace resources (custom cards, themes, CSS/JS)
+- `ha_config_set_dashboard_resource` — Create or update a dashboard resource (inline or URL)
+- `ha_config_delete_dashboard_resource` — Delete a dashboard resource
+- `ha_manage_theme` — Manage frontend themes
 
-### Calendar
-- `ha_config_get_calendar_events` - Get calendar events
-- `ha_config_set_calendar_event` - Set calendar event
-- `ha_config_remove_calendar_event` - Remove calendar event
+### Areas, Floors, Labels & Categories
+- `ha_list_floors_areas` — Floors (by level) with nested areas, plus areas without a floor
+- `ha_set_area_or_floor` — Create or update an area or floor
+- `ha_remove_area_or_floor` — Remove an area or floor
+- `ha_config_get_label` — List labels or get one by ID
+- `ha_config_set_label` — Create or update a label
+- `ha_config_remove_label` — Delete a label
+- `ha_config_get_category` — List categories for a scope, or get one by ID
+- `ha_config_set_category` — Create or update a category
+- `ha_config_remove_category` — Delete a category
+
+### Zones
+- `ha_get_zone` — List zones or get one
+- `ha_set_zone` — Create or update a zone (replaces `ha_create_zone`/`ha_update_zone`)
+- `ha_remove_zone` — Remove a zone
+
+### Todo & Calendar
+- `ha_get_todo` — List todo lists or items from a list
+- `ha_set_todo_item` — Create or update a todo item
+- `ha_remove_todo_item` — Remove a todo item
+- `ha_config_get_calendar_events` — Retrieve calendar events
+- `ha_config_set_calendar_event` — Create a calendar event
+- `ha_config_remove_calendar_event` — Delete a calendar event
 
 ### Blueprints
-- `ha_list_blueprints` - List blueprints
-- `ha_get_blueprint` - Get blueprint
-- `ha_import_blueprint` - Import blueprint
+- `ha_manage_blueprints` — List, read, import, save, delete, or render a blueprint (replaces `ha_list_blueprints`/`ha_get_blueprint`/`ha_import_blueprint`)
 
-### Device Registry
-- `ha_list_devices` - List devices
-- `ha_get_device` - Get device
-- `ha_update_device` - Update device
-- `ha_remove_device` - Remove device
-- `ha_rename_entity` - Rename entity
+### Voice / Assist
+- `ha_manage_pipeline` — Manage Assist pipelines
 
-### ZHA & Integrations
-- `ha_get_zha_devices` - Get ZHA devices
-- `ha_get_entity_integration_source` - Get entity integration source
+### HACS
+- `ha_get_hacs_info` — Search the store or fetch repository details (replaces `ha_hacs_info`/`ha_hacs_search`/`ha_hacs_repository_info`)
+- `ha_manage_hacs` — Install/update, remove, add custom repos, refresh repo info
 
-### Add-ons
-- `ha_list_addons` - List add-ons
-- `ha_list_available_addons` - List available add-ons
+### Apps (Add-ons)
+- `ha_get_app` — List installed/available apps (add-ons) or one's details (replaces `ha_list_addons`/`ha_list_available_addons`)
+- `ha_manage_app` — Manage apps (add-ons) or proxy an app API
 
-### Camera
-- `ha_get_camera_image` - Get camera image
+### Radios & Energy
+- `ha_manage_radio` — Manage Z-Wave, Zigbee, Matter, and Thread radios
+- `ha_manage_energy_prefs` — Manage the Energy Dashboard preferences
 
-### History & Statistics
-- `ha_get_history` - Get history
-- `ha_get_statistics` - Get statistics
+### System, Updates & Backups
+- `ha_get_system_health` — System health, including ZHA, Z-Wave JS, and per-integration diagnostics (replaces `ha_get_system_info`/`ha_get_system_version`)
+- `ha_reload_core` — Reload configuration without a full restart (also validates config; use before `ha_restart`)
+- `ha_restart` — Restart Home Assistant
+- `ha_manage_updates` — List, read details, batch install, skip, or un-skip updates (replaces `ha_list_updates`/`ha_get_release_notes`)
+- `ha_manage_backup` — Manage full HA snapshots AND per-edit auto-backups (replaces `ha_backup_create`/`ha_backup_restore`)
 
-### Automation Traces
-- `ha_get_automation_traces` - Get automation traces
+### Guides & Diagnostics
+- `ha_get_skill_guide` — Bundled best-practice guides — **call first** for matching actions
+- `ha_report_issue` — Diagnostic info and templates for filing issue reports
 
-### System & Updates
-- `ha_check_config` - Check config
-- `ha_restart` - Restart
-- `ha_reload_core` - Reload core
-- `ha_get_system_info` - Get system info
-- `ha_get_system_health` - Get system health
-- `ha_list_updates` - List updates
-- `ha_get_release_notes` - Get release notes
-- `ha_get_system_version` - Get system version
+## Auto-Approved (read-only) Tools
 
-### Backup & Restore
-- `ha_backup_create` - Create backup
-- `ha_backup_restore` - Restore backup
-
-### Utility
-- `ha_get_logbook` - Get logbook
-- `ha_eval_template` - Evaluate template
-- `ha_get_domain_docs` - Get domain docs
-- `ha_list_integrations` - List integrations
+The power auto-approves read-only tools so common queries run without prompts. Mutating tools (`ha_set_*`, `ha_remove_*`, `ha_call_service`, `ha_bulk_control`, `ha_manage_*`, `ha_restart`, `ha_reload_core`, deletes) require confirmation by design.
 
 ## Tool Usage Guidelines
 
-### When to Use Each Tool Category
+### Common Patterns
 
-**Search & Discovery:**
-Use when you need to find entities or understand the system state. Start with `ha_search_entities` for fuzzy matching, use `ha_deep_search` for comprehensive config searches.
+**Pattern 1: Safe entity control**
+1. Find the entity: `ha_search`
+2. Read current state: `ha_get_state`
+3. Act: `ha_call_service`
+4. Verify: `ha_get_operation_status`
 
-**Service & Device Control:**
-Use `ha_call_service` for single operations, `ha_bulk_control` for multiple devices at once. Always check status with `ha_get_operation_status` or `ha_get_bulk_status` after operations.
+**Pattern 2: Automation lifecycle**
+1. Load guidance: `ha_get_skill_guide`
+2. Read existing: `ha_config_get_automation`
+3. Create/update: `ha_config_set_automation`
+4. Debug: `ha_get_automation_traces`
 
-**Automations:**
-Use `ha_config_get_automation` to read existing automations before modifying. Use `ha_config_set_automation` to create or update. Always validate automation structure before setting.
+**Pattern 3: Dashboard customization**
+1. Read: `ha_config_get_dashboard`
+2. Update: `ha_config_set_dashboard`
+3. Custom cards: `ha_config_set_dashboard_resource`
 
-**Scripts:**
-Similar to automations but for reusable sequences. Use `ha_config_get_script` to read, `ha_config_set_script` to create/update.
+**Pattern 4: Template sensor / helper**
+1. Load guidance: `ha_get_skill_guide`
+2. Create: `ha_config_set_helper` (helper_type `template`)
 
-**Dashboards:**
-Use `ha_config_list_dashboards` to see available dashboards, `ha_config_get_dashboard` to read current config, `ha_config_set_dashboard` to update.
-
-**Device Registry:**
-Use `ha_list_devices` to discover devices, `ha_get_device` for details, `ha_update_device` to modify metadata.
-
-**History & Statistics:**
-Use `ha_get_history` for time-series data, `ha_get_statistics` for aggregated metrics.
-
-**Automation Traces:**
-Use `ha_get_automation_traces` when debugging automations that don't work as expected. Traces show execution history and why automations triggered or didn't trigger.
-
-## Common Patterns
-
-### Pattern 1: Safe Entity Control
-1. Search for entity: `ha_search_entities`
-2. Get current state: `ha_get_state`
-3. Call service: `ha_call_service`
-4. Verify result: `ha_get_operation_status`
-
-### Pattern 2: Automation Creation
-1. Check existing automations: `ha_config_get_automation`
-2. Design automation structure
-3. Set automation: `ha_config_set_automation`
-4. Test and verify with traces: `ha_get_automation_traces`
-
-### Pattern 3: Dashboard Customization
-1. List dashboards: `ha_config_list_dashboards`
-2. Get current dashboard: `ha_config_get_dashboard`
-3. Modify dashboard structure
-4. Update dashboard: `ha_config_set_dashboard`
-
-### Pattern 4: Bulk Operations
-1. Search for target entities: `ha_search_entities`
-2. Execute bulk control: `ha_bulk_control`
-3. Check bulk status: `ha_get_bulk_status`
+**Pattern 5: Bulk operations**
+1. Find targets: `ha_search`
+2. Execute: `ha_bulk_control`
+3. Check: `ha_get_operation_status`
 
 ## Error Handling
 
 When tools return errors:
-1. Check entity IDs are correct (use `ha_search_entities` to verify)
+1. Verify entity IDs with `ha_search` or `ha_get_state`
 2. Verify service names with `ha_list_services`
-3. Ensure proper authentication (check token validity)
-4. Review automation traces for automation issues
-5. Check system health with `ha_get_system_health`
+3. Confirm authentication (token validity) for the uvx/Docker methods
+4. Review `ha_get_automation_traces` for automation issues
+5. Check `ha_get_system_health` and `ha_get_logs` for system problems

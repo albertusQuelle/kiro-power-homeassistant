@@ -18,11 +18,13 @@ This power provides comprehensive Home Assistant support:
 
 **MCP tool categories:**
 
-- **Search & Discovery**: Fuzzy entity search, deep config search, system overview
-- **Control**: Any service call, bulk device control, real-time state retrieval
-- **Management**: Automations, scripts, helpers, dashboards, areas, zones, groups, calendars, blueprints
-- **Monitoring**: History, statistics, camera snapshots, automation traces, ZHA devices
-- **System**: Backup/restore, updates, add-ons, device registry
+- **Search & Discovery**: Unified search across entities and configs (`ha_search`), system overview, live state
+- **Control**: Any service call, bulk device control, custom events
+- **Management**: Automations, scripts, scenes, helpers, dashboards, areas/floors, zones, groups, labels, categories, calendars, blueprints, integrations
+- **Monitoring**: History, camera snapshots, automation/script traces, logs, system health (incl. Zigbee/Z-Wave)
+- **System**: Backups, updates, apps (add-ons), HACS, radios (Z-Wave/Zigbee/Matter/Thread), themes, energy prefs, device/entity registry
+
+The server also ships bundled best-practice guides via `ha_get_skill_guide`, which Kiro consults before structured tasks.
 
 ## Usage Examples
 
@@ -58,7 +60,7 @@ This power provides comprehensive Home Assistant support:
 1. Open Kiro
 2. Open Powers panel
 3. Click "Import power from GitHub"
-4. Enter: `https://github.com/rewse/kiro-power-homeassistant/tree/main/power-homeassistant`
+4. Enter: `https://github.com/albertusQuelle/kiro-power-homeassistant/tree/main/power-homeassistant`
 
 ### From Local Path
 
@@ -67,9 +69,21 @@ This power provides comprehensive Home Assistant support:
 3. Click "Import power from a folder"
 4. Select the `power-homeassistant` directory (not `kiro-power-homeassistant` directory)
 
+## How the MCP server runs
+
+This power ships an `mcp.json` that runs the [`ha-mcp`](https://github.com/homeassistant-ai/ha-mcp) server with `uvx --system-certs ha-mcp@latest` over stdio, connecting to your Home Assistant with a long-lived token. Using the operating system trust store also supports enterprise TLS proxies and private certificate authorities. This works on any Home Assistant install type and is the zero-extra-setup default for this power.
+
+The `ha-mcp` project also offers other ways to run the same server, which you can point Kiro at instead:
+
+- **HACS in-process Custom Component (upstream's recommended path):** installs into Home Assistant via HACS and runs in-process on every install type, with no token to manage. You connect Kiro to a server URL from the integration's Configure screen.
+- **Home Assistant app (add-on):** for Home Assistant OS / Supervised installs, also token-free.
+- **Docker (HTTP):** run `ghcr.io/homeassistant-ai/ha-mcp` pointed at your Home Assistant URL and token.
+
+See the [ha-mcp README](https://github.com/homeassistant-ai/ha-mcp) and [Setup Wizard](https://homeassistant-ai.github.io/ha-mcp/setup/) for those methods. Use exactly one method per client.
+
 ## Prerequisites
 
-This power requires `uv` to be installed:
+The default (uvx) method requires `uv` to be installed:
 
 **macOS / Linux:**
 ```bash
@@ -147,5 +161,7 @@ When you mention keywords like "homeassistant," "home assistant," "hass,", "ha-m
 For detailed troubleshooting, see the [official FAQ](https://github.com/homeassistant-ai/ha-mcp/blob/master/docs/FAQ.md).
 
 ## Credits
+
+This fork is based on the original [rewse/kiro-power-homeassistant](https://github.com/rewse/kiro-power-homeassistant) project.
 
 Special thanks to the [Home Assistant AI team](https://github.com/homeassistant-ai/ha-mcp) for their excellent work on the MCP server.

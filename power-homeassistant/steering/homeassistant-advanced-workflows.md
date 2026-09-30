@@ -13,13 +13,13 @@ Agent: Loads homeassistant-smart-climate-guide.md for modular patterns
        - input_select for room modes (Present/Absent/Vent)
        - input_number for target temperatures per mode
        - input_number for computed target temperature
-       Uses ha_config_set_input_select and ha_config_set_input_number
+       Uses ha_config_set_helper (helper_type: input_select, then input_number)
        Creates 3 automation chain:
        1. Inputs → Modes (presence + window sensors drive mode)
        2. Modes → Target Temperature (mode determines temperature)
        3. Target Temperature → Climate Device (with 1-hour override reset)
        Uses ha_config_set_automation to deploy each automation
-       Confirms system is working with ha_get_entity_state
+       Confirms system is working with ha_get_state
 ```
 
 ### Add Climate Override (MCP + Steering)
@@ -49,7 +49,7 @@ Agent: Loads homeassistant-smart-climate-guide.md for room variations
        - numeric_state trigger above 70% humidity
        - Sets mode to Boost
        Uses ha_config_set_automation to deploy
-       Confirms with ha_get_entity_state on humidity sensor
+       Confirms with ha_get_state on humidity sensor
 ```
 
 ### Set Up Bedroom Sleep Mode (MCP + Steering)
@@ -93,7 +93,7 @@ Agent: Loads homeassistant-smart-climate-guide.md for modular patterns
        2. Modes → Light Settings (mode determines color_temp/brightness)
        3. Light Settings → Bulbs (apply to light entities)
        Uses ha_config_set_automation to deploy each automation
-       Confirms with ha_get_entity_state on light entities
+       Confirms with ha_get_state on light entities
 ```
 
 ## Voice Assistant (Assist)
@@ -171,11 +171,11 @@ Agent: Loads homeassistant-tips-and-tricks.md for dynamic scene patterns
 User: Create a single switch to enable/disable all my vacation automations
 Agent: Loads homeassistant-tips-and-tricks.md for master switch pattern
        Creates input_boolean helper for the group
-       Uses ha_config_set_input_boolean to create
+       Uses ha_config_set_helper (helper_type: input_boolean) to create
        Updates each related automation to add condition:
        - state condition checking input_boolean is "on"
        Uses ha_config_set_automation to update each automation
-       Confirms with ha_get_entity_state
+       Confirms with ha_get_state
 ```
 
 ### Set Up Zone-Based Occupancy Detection (MCP + Steering)
@@ -195,7 +195,7 @@ Agent: Loads homeassistant-tips-and-tricks.md for zone state patterns
 ```
 User: Turn off the lights 2 hours after motion stops
 Agent: Loads homeassistant-tips-and-tricks.md for delayed action pattern
-       Creates input_datetime helper with ha_config_set_input_datetime
+       Creates input_datetime helper with ha_config_set_helper (helper_type: input_datetime)
        Creates two automations:
        1. Motion stops → Set datetime to now + 2 hours
        2. Time trigger on input_datetime → Turn off lights
@@ -286,7 +286,7 @@ Agent: Loads homeassistant-companion-app-guide.md for Siri Shortcuts
 ```
 User: My phone location isn't updating in Home Assistant
 Agent: Loads homeassistant-companion-app-guide.md for troubleshooting
-       Checks device_tracker entity with ha_get_entity_state
+       Checks device_tracker entity with ha_get_state
        Provides platform-specific checklist:
        - iOS: Location permission "Always", check sensor.last_update_trigger
        - Android: Background access, battery optimization disabled
@@ -340,7 +340,7 @@ Agent: Loads homeassistant-templating-guide.md for aggregation patterns
        - List of power sensor entity IDs
        - map('states') | map('float', default=0) | sum pattern
        - Proper unit_of_measurement and device_class
-       Uses ha_config_set_template to deploy (or provides YAML)
+       Uses ha_config_set_helper (helper_type: template) to deploy (or provides YAML)
 ```
 
 ### Calculate Distance Between Entities (MCP + Steering)
@@ -352,7 +352,7 @@ Agent: Loads homeassistant-templating-guide.md for distance functions
        - distance() function with device_tracker and zone
        - Proper unit_of_measurement (km or mi)
        Shows closest() function for finding nearest entity
-       Uses ha_config_set_template to deploy (or provides YAML)
+       Uses ha_config_set_helper (helper_type: template) to deploy (or provides YAML)
 ```
 
 ### Create Dynamic Entity List with expand() (MCP + Steering)
@@ -364,7 +364,7 @@ Agent: Loads homeassistant-tips-and-tricks.md for expand() patterns
        - expand(states.update) to get all update entities
        - selectattr('state', 'eq', 'on') filter
        - Attribute listing entity names
-       Uses ha_config_set_template to deploy (or provides YAML)
+       Uses ha_config_set_helper (helper_type: template) to deploy (or provides YAML)
 ```
 
 ## Configuration Management
