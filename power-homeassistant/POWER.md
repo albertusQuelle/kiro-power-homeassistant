@@ -18,11 +18,11 @@ Control Home Assistant with natural language using Kiro. This power combines MCP
 
 **MCP tool categories:**
 
-- **Search & Discovery**: Fuzzy entity search, deep config search, system overview
-- **Control**: Any service call, bulk device control, real-time state retrieval
-- **Management**: Automations, scripts, helpers, dashboards, areas, zones, groups, calendars, blueprints
-- **Monitoring**: History, statistics, camera snapshots, automation traces, ZHA devices
-- **System**: Backup/restore, updates, add-ons, device registry
+- **Search & Discovery**: Unified search across entities and configs (`ha_search`), system overview, live state
+- **Control**: Any service call, bulk device control, custom events
+- **Management**: Automations, scripts, scenes, helpers, dashboards, areas/floors, zones, groups, labels, categories, calendars, blueprints, integrations
+- **Monitoring**: History, camera snapshots, automation/script traces, logs, system health (incl. Zigbee/Z-Wave)
+- **System**: Backups, updates, apps (add-ons), HACS, radios (Z-Wave/Zigbee/Matter/Thread), themes, energy prefs, device/entity registry
 
 # Onboarding
 
@@ -105,6 +105,10 @@ THEN load `homeassistant-advanced-workflows.md`
 
 # Best Practices
 
+## Consult the Server's Skill Guides First
+
+The `ha-mcp` server ships bundled best-practice guides. **Call `ha_get_skill_guide` before** structured work (automations, scripts, dashboards, templates, helpers). It returns the server's own current guidance and complements this power's steering files.
+
 ## Natural Language First
 
 **Start with natural language** for common operations:
@@ -145,7 +149,7 @@ THEN load `homeassistant-advanced-workflows.md`
 
 ```
 User: Turn on the living room lights
-Agent: Uses ha_search_entities to find light.living_room
+Agent: Uses ha_search to find light.living_room
        Uses ha_call_service to call light.turn_on
        Confirms the light is now on
 ```
@@ -154,8 +158,8 @@ Agent: Uses ha_search_entities to find light.living_room
 
 ```
 User: What's the temperature in the bedroom?
-Agent: Uses ha_search_entities to find temperature sensors
-       Uses ha_get_entity_state to retrieve current value
+Agent: Uses ha_search to find temperature sensors
+       Uses ha_get_state to retrieve current value
        Reports temperature with unit
 ```
 
@@ -163,7 +167,8 @@ Agent: Uses ha_search_entities to find temperature sensors
 
 ```
 User: Create an automation that turns on the porch light at sunset
-Agent: Loads homeassistant-dev-guide.md for YAML conventions
+Agent: Calls ha_get_skill_guide first for server best practices
+       Loads homeassistant-dev-guide.md for YAML conventions
        Loads homeassistant-scripts-guide.md for action syntax
        Creates automation following best practices:
        - Descriptive alias: "Porch Light at Sunset"
@@ -207,7 +212,7 @@ Agent: Loads homeassistant-dev-guide.md for template guidelines
        - Function-style state access: states(), state_attr()
        - Explicit type conversion: float()
        - Default values for unavailable handling
-       Uses ha_config_set_template to deploy (or provides YAML)
+       Uses ha_config_set_helper (helper_type: template) to deploy (or provides YAML)
 ```
 
 ## Review YAML Configuration (Steering only)
@@ -321,7 +326,7 @@ For more workflow examples (smart climate systems, voice assistant customization
 1. Verify entity ID is correct (e.g., `light.living_room`)
 2. Check entity is enabled in Home Assistant
 3. Ensure entity integration is properly configured
-4. Use `ha_search_entities` tool to find correct entity ID
+4. Use `ha_search` tool to find correct entity ID
 
 ## "uvx: command not found"
 
@@ -346,7 +351,7 @@ For more workflow examples (smart climate systems, voice assistant customization
 # Tips
 
 1. **Start with natural language** - Describe what you want in plain language
-2. **Use fuzzy search** - `ha_search_entities` finds entities even with partial names
+2. **Use fuzzy search** - `ha_search` finds entities even with partial names
 3. **Check traces for debugging** - `ha_get_automation_traces` shows why automations triggered or didn't
 4. **Leverage steering files** - Complex YAML work loads `homeassistant-dev-guide.md` automatically
 5. **Test incrementally** - Create simple automations first, then add complexity
