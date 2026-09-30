@@ -71,7 +71,9 @@ The server also ships bundled best-practice guides via `ha_get_skill_guide`, whi
 
 ## How the MCP server runs
 
-This power ships an `mcp.json` that runs the [`ha-mcp`](https://github.com/homeassistant-ai/ha-mcp) server with `uvx --system-certs ha-mcp@latest` over stdio, connecting to your Home Assistant with a long-lived token. Using the operating system trust store also supports enterprise TLS proxies and private certificate authorities. This works on any Home Assistant install type and is the zero-extra-setup default for this power.
+This power ships an `mcp.json` that runs the [`ha-mcp`](https://github.com/homeassistant-ai/ha-mcp) server with `uvx --system-certs ha-mcp==8.6.0` over stdio, connecting to your Home Assistant with a long-lived token. Using the operating system trust store also supports enterprise TLS proxies and private certificate authorities. This works on any Home Assistant install type and is the zero-extra-setup default for this power.
+
+The version is **pinned** (`==8.6.0`) rather than `@latest` on purpose. With `@latest`, `uvx` can re-resolve and download a newer server build mid-session; the MCP client keeps the tool schema it negotiated at startup, so the client schema and the running server can drift apart. That mismatch shows up as individual tools becoming unroutable ("tool does not exist") or writes failing schema validation. Pinning keeps the client and server on the same contract. To move to a newer server, bump this pin deliberately and reload the client.
 
 The `ha-mcp` project also offers other ways to run the same server, which you can point Kiro at instead:
 

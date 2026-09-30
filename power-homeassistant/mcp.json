@@ -2,7 +2,7 @@
   "mcpServers": {
     "Home Assistant": {
       "command": "uvx",
-      "args": ["--system-certs", "ha-mcp@latest"],
+      "args": ["--system-certs", "ha-mcp==8.6.0"],
       "env": {
         "FASTMCP_LOG_LEVEL": "ERROR",
         "HOMEASSISTANT_URL": "${HOMEASSISTANT_URL}",
